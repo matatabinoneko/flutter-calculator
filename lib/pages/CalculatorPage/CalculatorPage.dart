@@ -1,22 +1,48 @@
+import 'package:calculator/pages/CalculatorPage/CalculatorPageState.dart';
 import 'package:calculator/src/components/roundButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class CalculatorPage extends StatelessWidget {
+import 'CalculatorNotifier.dart';
+
+final calculatorReferenceProvider =
+    StateNotifierProvider<CalculatorReferenceNotifier, CalculatorPageState>(
+  (ref) => CalculatorReferenceNotifier(ref.read),
+);
+
+class CalculatorPage extends ConsumerWidget {
   const CalculatorPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final calculatorReferenceState = ref.watch(calculatorReferenceProvider);
+    final calculatorReferenceNotifier =
+        ref.watch(calculatorReferenceProvider.notifier);
+
+    String getDisplayResult() {
+      final result = calculatorReferenceState.result.toStringAsPrecision(5);
+      final operator = calculatorReferenceState.operator;
+      final inputNumber = calculatorReferenceState.inputNumber;
+      if (inputNumber != "") {
+        return inputNumber;
+      } else if (operator == "") {
+        return result;
+      } else {
+        return "$result $operator";
+      }
+    }
+
     return Column(
       children: [
-        const Text("計算結果"),
+        Text(getDisplayResult()),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             RoundButton(
               text: "AC",
               onClick: () {
-                print("AC");
+                calculatorReferenceNotifier.allClear();
               },
             ),
             RoundButton(
@@ -34,7 +60,7 @@ class CalculatorPage extends StatelessWidget {
             RoundButton(
               text: "/",
               onClick: () {
-                print("/");
+                calculatorReferenceNotifier.setOperator("/");
               },
             )
           ],
@@ -45,25 +71,25 @@ class CalculatorPage extends StatelessWidget {
             RoundButton(
               text: "7",
               onClick: () {
-                print(7);
+                calculatorReferenceNotifier.addInputNumber("7");
               },
             ),
             RoundButton(
               text: "8",
               onClick: () {
-                print(8);
+                calculatorReferenceNotifier.addInputNumber("8");
               },
             ),
             RoundButton(
               text: "9",
               onClick: () {
-                print(9);
+                calculatorReferenceNotifier.addInputNumber("9");
               },
             ),
             RoundButton(
               text: "×",
               onClick: () {
-                print("×");
+                calculatorReferenceNotifier.setOperator("*");
               },
             )
           ],
@@ -74,25 +100,25 @@ class CalculatorPage extends StatelessWidget {
             RoundButton(
               text: "4",
               onClick: () {
-                print(4);
+                calculatorReferenceNotifier.addInputNumber("4");
               },
             ),
             RoundButton(
               text: "5",
               onClick: () {
-                print(5);
+                calculatorReferenceNotifier.addInputNumber("5");
               },
             ),
             RoundButton(
               text: "6",
               onClick: () {
-                print(6);
+                calculatorReferenceNotifier.addInputNumber("6");
               },
             ),
             RoundButton(
               text: "-",
               onClick: () {
-                print("-");
+                calculatorReferenceNotifier.setOperator("-");
               },
             )
           ],
@@ -103,25 +129,25 @@ class CalculatorPage extends StatelessWidget {
             RoundButton(
               text: "1",
               onClick: () {
-                print(1);
+                calculatorReferenceNotifier.addInputNumber("1");
               },
             ),
             RoundButton(
               text: "2",
               onClick: () {
-                print(2);
+                calculatorReferenceNotifier.addInputNumber("2");
               },
             ),
             RoundButton(
               text: "3",
               onClick: () {
-                print(3);
+                calculatorReferenceNotifier.addInputNumber("3");
               },
             ),
             RoundButton(
               text: "+",
               onClick: () {
-                print("+");
+                calculatorReferenceNotifier.setOperator("+");
               },
             )
           ],
@@ -132,19 +158,19 @@ class CalculatorPage extends StatelessWidget {
             RoundButton(
               text: "0",
               onClick: () {
-                print(0);
+                calculatorReferenceNotifier.addInputNumber("0");
               },
             ),
             RoundButton(
               text: ".",
               onClick: () {
-                print(".");
+                calculatorReferenceNotifier.addPeriod();
               },
             ),
             RoundButton(
               text: "=",
               onClick: () {
-                print("=");
+                calculatorReferenceNotifier.setOperator("=");
               },
             )
           ],
